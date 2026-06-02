@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omar Faruk | AI Automation Developer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
+
+    * {
+      font-family: 'Space Grotesk', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #060312;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .flow-node:hover .flow-node-inner {
+      transform: scale(1.08);
+      filter: drop-shadow(0 0 12px var(--node-color));
+    }
+
+    .flow-node-inner {
+      transition: transform 0.25s ease, filter 0.25s ease;
+    }
+
+    .flow-edge-active {
+      stroke-dasharray: 8 4;
+      animation: dash-flow 0.6s linear infinite;
+    }
+
+    .flow-edge-inactive {
+      stroke-dasharray: 5 5;
+    }
+
+    @keyframes dash-flow {
+      to {
+        stroke-dashoffset: -12;
+      }
+    }
+
+    .skill-pill {
+      transition: all 0.2s ease;
+    }
+
+    .skill-pill:hover {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ca3af;
+      border: 1px solid #1f1f35;
+      background: #0f0a24;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-btn:hover {
+      color: white;
+      border-color: #7c3aed;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+    }
+
+    .social-btn-disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    @media (max-width: 900px) {
+      .hidden-mobile {
+        display: none !important;
+      }
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+
+<body style="background:#060312; color:white; margin:0;">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Brand Icons
+    const BrandIcon = ({ name, size = 32 }) => {
+      const icons = {
+        n8n: <svg viewBox="0 0 40 40" width={size} height={size}><rect width="40" height="40" rx="9" fill="#EA4B71" /><circle cx="12" cy="20" r="4.5" fill="white" /><circle cx="28" cy="12" r="4.5" fill="white" /><circle cx="28" cy="28" r="4.5" fill="white" /><line x1="16" y1="18" x2="24" y2="13.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" /><line x1="16" y1="22" x2="24" y2="26.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" /></svg>,
+        python: <svg viewBox="0 0 40 40" width={size} height={size}><rect width="40" height="40" rx="9" fill="#1e3a5f" /><path d="M20 6c-5.5 0-9 2.5-9 6v3.5h9v1.5H8.5c-3 0-6 2-6 8s3 8 6 8H11V30c0-3.5 2.5-5 5.5-5h7c3 0 5-2 5-5V12c0-3.5-3.5-6-8.5-6zm-2 4.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" fill="#4B8BBE" /><path d="M20 34c5.5 0 9-2.5 9-6v-3.5h-9V23h11.5c3 0 6-2 6-8s-3-8-6-8H29v3c0 3.5-2.5 5-5.5 5h-7c-3 0-5 2-5 5v7c0 3.5 3.5 6 8.5 6zm2-4.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="#FFD43B" /></svg>,
+        openai: <svg viewBox="0 0 40 40" width={size} height={size}><rect width="40" height="40" rx="9" fill="#10a37f" /><path d="M20 8.5a11.5 11.5 0 00-3.7.6A7.2 7.2 0 0010.8 12a7.2 7.2 0 00-.7 7.2 11.5 11.5 0 000 4.4 7.2 7.2 0 002.2 5.4 7.2 7.2 0 007.2.8 11.5 11.5 0 003.3 1 7.2 7.2 0 007-4.4 11.5 11.5 0 002.2-3.8 7.2 7.2 0 00-.7-7.2 7.2 7.2 0 00-4.5-6.1A11.5 11.5 0 0020 8.5z" fill="none" stroke="white" strokeWidth="1.8" /><path d="M13.5 20l3-5.2h7l3 5.2-3 5.2h-7z" fill="none" stroke="white" strokeWidth="1.5" /><circle cx="20" cy="20" r="2.2" fill="white" /></svg>,
+        sheets: <svg viewBox="0 0 40 40" width={size} height={size}><rect width="40" height="40" rx="9" fill="#0f9d58" /><rect x="10" y="8" width="20" height="24" rx="2" fill="white" /><rect x="13" y="12" width="14" height="2" rx="1" fill="#0f9d58" /><rect x="13" y="16" width="14" height="2" rx="1" fill="#0f9d58" /><rect x="13" y="20" width="14" height="2" rx="1" fill="#0f9d58" /><rect x="13" y="24" width="9" height="2" rx="1" fill="#0f9d58" /></svg>,
+        gmail: <svg viewBox="0 0 40 40" width={size} height={size}><rect width="40" height="40" rx="9" fill="#ffffff" stroke="#ddd" strokeWidth="0.5" /><path d="M8 12h24v16a2 2 0 01-2 2H10a2 2 0 01-2-2V12z" fill="white" stroke="#ddd" strokeWidth="0.5" /><path d="M8 12l12 10 12-10" fill="none" stroke="#EA4335" strokeWidth="2.5" strokeLinejoin="round" /><line x1="8" y1="12" x2="8" y2="28" stroke="#4285F4" strokeWidth="2" /><line x1="32" y1="12" x2="32" y2="28" stroke="#34A853" strokeWidth="2" /><path d="M8 28l9-8" stroke="#FBBC04" strokeWidth="2" /><path d="M32 28l-9-8" stroke="#EA4335" strokeWidth="2" /></svg>,
+        webhook: <svg viewBox="0 0 40 40" width={size} height={size}><rect width="40" height="40" rx="9" fill="#6366f1" /><path d="M20 12v4M20 24v4M12 20h4M24 20h4" stroke="white" strokeWidth="2.5" strokeLinecap="round" /><circle cx="20" cy="20" r="3.5" fill="white" /><path d="M14.3 14.3l2.8 2.8M22.9 22.9l2.8 2.8M25.7 14.3l-2.8 2.8M17.1 22.9l-2.8 2.8" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.7" /></svg>,
+        api: <svg viewBox="0 0 40 40" width={size} height={size}><rect width="40" height="40" rx="9" fill="#7c3aed" /><text x="20" y="25" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold" fontFamily="monospace">&lt;/&gt;</text></svg>,
+        makecom: <svg viewBox="0 0 40 40" width={size} height={size}><rect width="40" height="40" rx="9" fill="#6d28d9" /><circle cx="14" cy="20" r="4" fill="none" stroke="white" strokeWidth="2.2" /><circle cx="26" cy="20" r="4" fill="none" stroke="white" strokeWidth="2.2" /><line x1="18" y1="20" x2="22" y2="20" stroke="white" strokeWidth="2.2" /></svg>,
+      };
+      return icons[name] || <span>🔧</span>;
+    };
+
+    // Social Icons
+    const GithubIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" /></svg>;
+    const LinkedinIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 23.999 23.227 23.999 22.271V1.729C23.999.774 23.2 0 22.222 0h.003z" /></svg>;
+    const FacebookIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>;
+    const UpworkIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.546-1.405 0-2.543-1.14-2.543-2.546V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z" /></svg>;
+    const FiverrIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M23.004 15.588a.995.995 0 1 0 .002-1.99.995.995 0 0 0-.002 1.99zm-.996-3.705h-1.85c-1.124 0-1.74-.799-1.74-1.947V7.176h1.52V5.585h-1.52V3.207h-2.007v7.574c0 2.072 1.461 3.498 3.578 3.498h2.02v-2.396zM12.158 9.408c.937.22 1.616.92 1.616 2.258v4.065h-1.915v-3.878c0-.758-.454-1.27-1.197-1.27-.765 0-1.35.545-1.35 1.375v3.773H7.396v-3.878c0-.758-.454-1.27-1.197-1.27-.765 0-1.35.545-1.35 1.375v3.773H2.843V8.67h1.907v.636a2.725 2.725 0 0 1 1.972-.758c.875 0 1.638.37 2.118 1.012a2.967 2.967 0 0 1 2.352-1.012c.374 0 .726.07 1.066.208l-.1-.348zm-10.7 6.323H3.37V8.67H1.458v7.061zM2.413 7.474a1.149 1.149 0 1 0 .002-2.298 1.149 1.149 0 0 0-.002 2.298z" /></svg>;
+    const MailIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" /></svg>;
+    const SendIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>;
+
+    // Data
+    const NAV_LINKS = ["Home", "About", "Projects", "Services", "Skills", "Contact"];
+    const SOCIAL_LINKS = [
+      { icon: <GithubIcon />, href: "https://github.com/omar-dev205", title: "GitHub", disabled: false },
+      { icon: <LinkedinIcon />, href: "https://www.linkedin.com/in/omar-faruk-b819b1280/", title: "LinkedIn", disabled: false },
+      { icon: <FacebookIcon />, href: "https://www.facebook.com/profile.php?id=100036720968667", title: "Facebook", disabled: false },
+      { icon: <MailIcon />, href: "mailto:of731528@gmail.com", title: "Email", disabled: false },
+      { icon: <UpworkIcon />, href: "https://www.upwork.com/freelancers/~01b3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f three", title: "Upwork (Coming Soon)", disabled: true },
+      { icon: <FiverrIcon />, href: "https://www.fiverr.com/omar_ai3", title: "Fiverr", disabled: false },
+    ];
+
+
+    const SERVICES = [
+      { icon: "🤖", title: "AI Agent Development", desc: "Build intelligent AI agents that understand, decide and act." },
+      { icon: "⚙️", title: "n8n Workflow Automation", desc: "Automate workflows, integrate apps and streamline processes." },
+      { icon: "🐍", title: "Python Automation Scripts", desc: "Custom Python scripts to automate tasks and solve complex problems." },
+      { icon: "🌐", title: "API Integration", desc: "Connect APIs and build powerful integrations." },
+      { icon: "📧", title: "Email & CRM Automation", desc: "Automate emails, CRM updates and lead management." },
+      { icon: "📊", title: "Data Processing & Reporting", desc: "Collect, clean and analyze data to generate insightful reports." },
+      { icon: "📈", title: "Reporting & Dashboards", desc: "Create automated dashboards for better decision making." },
+      { icon: "🔗", title: "Multi-Agent Systems", desc: "Build multi-agent workflows to handle complex tasks." },
+    ];
+    const SKILL_LIST = [
+      { name: "n8n", color: "#ea4b71", iconKey: "n8n" }, { name: "Python", color: "#3776ab", iconKey: "python" },
+      { name: "Make.com", color: "#a855f7", iconKey: "makecom" }, { name: "OpenAI", color: "#10a37f", iconKey: "openai" },
+      { name: "Google Sheets", color: "#0f9d58", iconKey: "sheets" }, { name: "Gmail", color: "#ea4335", iconKey: "gmail" },
+      { name: "REST APIs", color: "#f59e0b" }, { name: "Webhook", color: "#6366f1", iconKey: "webhook" },
+      { name: "PostgreSQL", color: "#336791" }, { name: "Docker", color: "#2496ed" }, { name: "Git & GitHub", color: "#f05032" },
+      { name: "VS Code", color: "#007acc" },
+    ];
+    const STATS = [
+      { value: "10+", label: "Projects\nCompleted", icon: "📁" }, { value: "Happy", label: "Clients", icon: "👥" },
+      { value: "100+", label: "Automations\nBuilt", icon: "🚀" }, { value: "2+", label: "Years\nLearning", icon: "🎓" },
+    ];
+    const FLOW_NODES = [
+      { id: "n8n", label: "n8n", iconKey: "n8n", col: 0, row: 0 }, { id: "python", label: "Python", iconKey: "python", col: 1, row: 0 },
+      { id: "openai", label: "OpenAI", iconKey: "openai", col: 2, row: 0 }, { id: "sheets", label: "Google Sheets", iconKey: "sheets", col: 0, row: 1 },
+      { id: "gmail", label: "Gmail", iconKey: "gmail", col: 1, row: 1 }, { id: "webhook", label: "Webhook", iconKey: "webhook", col: 2, row: 1 },
+      { id: "api", label: "API / REST", iconKey: "api", col: 1, row: 2 },
+    ];
+    const FLOW_EDGES = [
+      { from: "n8n", to: "python" }, { from: "python", to: "openai" }, { from: "n8n", to: "sheets" },
+      { from: "python", to: "gmail" }, { from: "openai", to: "webhook" }, { from: "sheets", to: "gmail" },
+      { from: "gmail", to: "webhook" }, { from: "gmail", to: "api" }, { from: "webhook", to: "api" },
+    ];
+    const PROJECTS = [
+      { title: "Multi AI Agent Automation", desc: "A fully autonomous multi-AI agent workflow built on Make.com that handles content creation, lead qualification, and CRM management automatically.", tags: ["Make.com", "AI Agents", "CRM"], emoji: "🤖", link: "https://github.com/omar-dev205/multi-ai-agent-automation" },
+      { title: "AI Chatbot — Llama 3", desc: "A terminal-based AI chatbot using Python and the Llama 3 API. Supports natural conversation directly from the command line.", tags: ["Python", "Llama 3 API", "CLI"], emoji: "💬", link: "https://github.com/omar-dev205/AI-Chatbot-Llama3" },
+      { title: "AI-Powered Email & CRM Automation", desc: "An automated workflow that reads emails, qualifies leads with AI, and updates CRM records — all without manual effort.", tags: ["n8n", "OpenAI", "Gmail"], emoji: "📧", link: "https://github.com/omar-dev205/AI-Powered-Email-CRM-Automation" },
+      { title: "AI Lead Qualification Agent", desc: "An intelligent agent that automatically scores and qualifies incoming leads using AI, saving hours of manual sales work.", tags: ["AI Agent", "Make.com", "OpenAI"], emoji: "🎯", link: "https://github.com/omar-dev205/AI-Lead-Qualification-Agent" },
+      { title: "LinkedIn Content Automation Agent", desc: "An automated AI workflow using Make.com, Google Sheets, and Gemini API to research, draft, and publish LinkedIn content efficiently.", tags: ["Make.com", "Gemini AI", "Google Sheets"], emoji: "📝", link: "https://github.com/omar-dev205/LinkedIn-Content-Automation-Agent" },
+      { title: "Python Terminal Tools & Games", desc: "A collection of terminal-based Python projects including a Calculator and Rock Paper Scissors game — built to sharpen core Python skills.", tags: ["Python", "CLI", "Logic"], emoji: "🎮", link: "https://github.com/omar-dev205/project-1-python-tools-games" },
+    ];
+
+    // Automation Flow Component
+    function AutomationFlow() {
+      const [activeEdge, setActiveEdge] = useState(0);
+      const [hoveredNode, setHoveredNode] = useState(null);
+      useEffect(() => { const t = setInterval(() => setActiveEdge(e => (e + 1) % FLOW_EDGES.length), 650); return () => clearInterval(t); }, []);
+      const CELL = 100, GAP = 16, PAD = 10;
+      const nodePos = {};
+      FLOW_NODES.forEach(n => { nodePos[n.id] = { cx: PAD + n.col * (CELL + GAP) + CELL / 2, cy: PAD + n.row * (CELL + GAP) + CELL / 2 }; });
+      const W = PAD * 2 + 3 * CELL + 2 * GAP, H = PAD * 2 + 3 * CELL + 2 * GAP;
+      return (
+        <div style={{ width: "100%", maxWidth: 400, display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", color: "#a78bfa", marginBottom: 12, textAlign: "right", textTransform: "uppercase" }}>I AUTOMATE WORKFLOWS WITH</p>
+          <div style={{ position: "relative", width: W, height: H }}>
+            <svg style={{ position: "absolute", inset: 0, pointerEvents: "none" }} width={W} height={H}>
+              <defs>
+                <marker id="arrowPurple" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#7c3aed" opacity="0.85" /></marker>
+                <marker id="arrowActive" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#c084fc" /></marker>
+              </defs>
+              {FLOW_EDGES.map((edge, i) => {
+                const from = nodePos[edge.from], to = nodePos[edge.to];
+                if (!from || !to) return null;
+                const active = i === activeEdge;
+                const HALF = CELL / 2 - 4;
+                const dx = to.cx - from.cx, dy = to.cy - from.cy;
+                const len = Math.hypot(dx, dy);
+                const ux = dx / len, uy = dy / len;
+                const x1 = from.cx + ux * (HALF + 4), y1 = from.cy + uy * (HALF + 4);
+                const x2 = to.cx - ux * (HALF + 12), y2 = to.cy - uy * (HALF + 12);
+                return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={active ? "#c084fc" : "#3b1a6e"} strokeWidth={active ? 2 : 1.5} strokeDasharray={active ? "8 4" : "5 5"} className={active ? "flow-edge-active" : "flow-edge-inactive"} markerEnd={active ? "url(#arrowActive)" : "url(#arrowPurple)"} opacity={active ? 1 : 0.55} />;
+              })}
+            </svg>
+            {FLOW_NODES.map(node => {
+              const pos = nodePos[node.id];
+              const isHovered = hoveredNode === node.id;
+              return (
+                <div key={node.id} className="flow-node" onMouseEnter={() => setHoveredNode(node.id)} onMouseLeave={() => setHoveredNode(null)} style={{ position: "absolute", left: pos.cx - CELL / 2, top: pos.cy - CELL / 2, width: CELL, height: CELL, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", "--node-color": "#a855f7" }}>
+                  <div className="flow-node-inner" style={{ width: 72, height: 72, borderRadius: 16, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, background: isHovered ? "rgba(139,92,246,0.12)" : "rgba(14,8,35,0.85)", border: `1.5px solid ${isHovered ? "#7c3aed" : "rgba(80,40,140,0.5)"}`, boxShadow: isHovered ? "0 0 20px rgba(139,92,246,0.35)" : "0 2px 12px rgba(0,0,0,0.4)" }}>
+                    <BrandIcon name={node.iconKey} size={28} />
+                    <span style={{ fontSize: 8.5, color: isHovered ? "#d8b4fe" : "#9ca3af", fontWeight: 600, textAlign: "center", lineHeight: 1.2, maxWidth: 64 }}>{node.label}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ width: W, marginTop: 12, borderRadius: 16, border: "1px solid rgba(88,28,135,0.45)", padding: "14px 16px", display: "flex", gap: 12, alignItems: "flex-start", background: "rgba(17,10,40,0.45)", backdropFilter: "blur(8px)" }}>
+            <div style={{ width: 34, height: 34, borderRadius: "50%", flexShrink: 0, background: "rgba(124,58,237,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🚀</div>
+            <p style={{ fontSize: 11, color: "#9ca3af", lineHeight: 1.65, margin: 0 }}>I help businesses automate repetitive tasks and build smart AI agent systems using <span style={{ color: "#c084fc", fontWeight: 700 }}>n8n</span>, <span style={{ color: "#c084fc", fontWeight: 700 }}>Python</span> and cutting-edge AI tools.</p>
+          </div>
+        </div>
+      );
+    }
+
+    // Navbar
+    function Navbar() {
+      const [scrolled, setScrolled] = useState(false);
+      useEffect(() => { const onScroll = () => setScrolled(window.scrollY > 30); window.addEventListener("scroll", onScroll); return () => window.removeEventListener("scroll", onScroll); }, []);
+      return (
+        <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: scrolled ? "rgba(6,3,18,0.96)" : "transparent", backdropFilter: scrolled ? "blur(18px)" : "none", borderBottom: scrolled ? "1px solid rgba(139,92,246,0.12)" : "none", transition: "all 0.3s ease" }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: "linear-gradient(135deg,#7c3aed,#a855f7)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, color: "white" }}>OF</div>
+              <div><p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: "white", lineHeight: 1 }}>Omar Faruk</p><p style={{ margin: 0, fontSize: 10, color: "#a78bfa", lineHeight: 1.4 }}>AI Automation Developer</p></div>
+            </div>
+            <ul style={{ display: "flex", gap: 32, listStyle: "none", margin: 0, padding: 0 }} className="hidden-mobile">
+              {NAV_LINKS.map(link => <li key={link}><a href={`#${link.toLowerCase()}`} style={{ color: "#d1d5db", textDecoration: "none", fontSize: 14, transition: "color 0.2s" }} onMouseEnter={e => e.target.style.color = "white"} onMouseLeave={e => e.target.style.color = "#d1d5db"}>{link}</a></li>)}
+            </ul>
+            <a href="mailto:of731528@gmail.com" style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 18px", fontSize: 13, fontWeight: 600, color: "white", borderRadius: 10, border: "1px solid rgba(139,92,246,0.4)", background: "rgba(124,58,237,0.12)", cursor: "pointer", textDecoration: "none", transition: "all 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor = "#a855f7"} onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(139,92,246,0.4)"}>Hire Me</a>
+          </div>
+        </nav>
+      );
+    }
+
+    // Hero - with professional image styling
+    function Hero() {
+      const [isHovered, setIsHovered] = useState(false);
+      return (
+        <section id="home" style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", paddingTop: 64, overflow: "hidden", background: "radial-gradient(ellipse 80% 80% at 50% 30%, #1a0933 0%, #060312 65%)" }}>
+          <div style={{ position: "absolute", inset: 0, opacity: 0.04, backgroundImage: "linear-gradient(rgba(139,92,246,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.4) 1px,transparent 1px)", backgroundSize: "48px 48px" }} />
+          <div style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 24px", width: "100%", position: "relative", zIndex: 1 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 32, alignItems: "center" }}>
+              {/* Left Text */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <div><p style={{ color: "#a78bfa", fontWeight: 600, fontSize: 18, fontStyle: "italic", margin: "0 0 4px 0" }}>Hello, I'm</p>
+                  <h1 style={{ margin: 0, lineHeight: 1, fontWeight: 900, letterSpacing: "-0.02em" }}><span style={{ fontSize: 72, color: "white", display: "block" }}>Omar</span><span style={{ fontSize: 72, background: "linear-gradient(135deg,#a855f7,#7c3aed)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", display: "block" }}>Faruk</span></h1></div>
+                <div><h2 style={{ margin: "0 0 10px 0", color: "white", fontWeight: 700, fontSize: 20 }}>AI Automation Developer</h2>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14, alignItems: "center" }}>{["n8n", "Python", "Make.com", "OpenAI"].map((t, i) => (<span key={t} style={{ display: "flex", alignItems: "center", gap: 6 }}>{i > 0 && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#7c3aed", display: "inline-block" }} />}<span style={{ color: "#d1d5db", fontSize: 14, fontWeight: 500 }}>{t}</span></span>))}</div>
+                  <p style={{ color: "#9ca3af", fontSize: 14, lineHeight: 1.7, margin: 0, maxWidth: 320 }}>I build AI-powered automation systems that save time, reduce manual work and help businesses grow faster.</p></div>
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                  <a href="mailto:of731528@gmail.com" style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 24px", borderRadius: 12, fontWeight: 600, color: "white", fontSize: 14, background: "#7c3aed", border: "none", cursor: "pointer", boxShadow: "0 0 24px rgba(124,58,237,0.4)", textDecoration: "none" }}><SendIcon /> Hire Me</a>
+                  <a href="https://github.com/omar-dev205" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 24px", borderRadius: 12, fontWeight: 600, color: "white", fontSize: 14, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(100,100,100,0.4)", cursor: "pointer", textDecoration: "none" }}><GithubIcon /> GitHub</a>
+                </div>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                  {SOCIAL_LINKS.map((s, i) => s.disabled ? <div key={i} title={s.title} className="social-btn social-btn-disabled">{s.icon}</div> : <a key={i} href={s.href} target={s.href.startsWith("mailto") ? "_self" : "_blank"} rel="noopener noreferrer" title={s.title} className="social-btn">{s.icon}</a>)}
+                  <span style={{ fontSize: 10, color: "#4b5563", fontStyle: "italic" }}>Upwork & Fiverr coming soon</span>
+                </div>
+              </div>
+
+              {/* Center: Professional Image with subtle rounded corners & shadow (no fake look) */}
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <div
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  style={{
+                    width: 320,
+                    height: 440,
+                    borderRadius: 20,
+                    overflow: "hidden",
+                    boxShadow: isHovered
+                      ? "0 25px 40px -12px rgba(0,0,0,0.6), 0 0 0 1.5px rgba(139,92,246,0.4)"
+                      : "0 20px 30px -10px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.15)",
+                    transition: "box-shadow 0.3s ease, transform 0.3s ease",
+                    transform: isHovered ? "scale(1.02)" : "scale(1)",
+                    background: "#0f0a24",
+                  }}
+                >
+                  <img
+                    src="omar.png"
+                    alt="Omar Faruk"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center 30%", // adjust based on your photo (20% to 40%)
+                      display: "block",
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.parentElement.style.display = "flex";
+                      e.target.parentElement.style.alignItems = "center";
+                      e.target.parentElement.style.justifyContent = "center";
+                      e.target.parentElement.style.background = "#1e1b2e";
+                      e.target.parentElement.innerText = "📷 Omar Faruk";
+                      e.target.parentElement.style.color = "#aaa";
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Right: Automation Flow */}
+              <div style={{ display: "flex", justifyContent: "flex-end" }}><AutomationFlow /></div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // About, Services, Skills, Projects, Contact, Footer (same as before, no changes needed)
+    function About() {
+      return (
+        <section id="about" style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
+          <div style={{ borderRadius: 20, padding: 32, border: "1px solid rgba(88,28,135,0.35)", background: "rgba(13,8,38,0.6)", backdropFilter: "blur(16px)" }}>
+            <h3 style={{ color: "#a78bfa", fontSize: 22, fontWeight: 700, margin: "0 0 4px 0" }}>About Me</h3>
+            <div style={{ width: 40, height: 3, background: "#7c3aed", borderRadius: 2, marginBottom: 16 }} />
+            <p style={{ color: "#d1d5db", fontSize: 14, lineHeight: 1.75, marginBottom: 28 }}>I'm an AI Automation Developer passionate about building smart solutions that automate tasks, integrate tools and streamline business workflows. I love turning complex <span style={{ color: "#c084fc", textDecoration: "underline" }}>processes</span> into simple, efficient and scalable automation systems.</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
+              {STATS.map(s => <div key={s.value} style={{ borderRadius: 14, padding: "20px 16px", textAlign: "center", border: "1px solid rgba(88,28,135,0.25)", background: "rgba(124,58,237,0.04)" }} onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(139,92,246,0.4)"} onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(88,28,135,0.25)"}><div style={{ fontSize: 26, marginBottom: 6 }}>{s.icon}</div><div style={{ color: "white", fontWeight: 900, fontSize: 22, lineHeight: 1 }}>{s.value}</div><div style={{ color: "#6b7280", fontSize: 10, marginTop: 4, lineHeight: 1.4, whiteSpace: "pre-line" }}>{s.label}</div></div>)}
+            </div>
+          </div>
+        </section>
+      );
+    }
+    function Services() {
+      return (
+        <section id="services" style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
+          <h2 style={{ color: "white", fontSize: 24, fontWeight: 700, margin: "0 0 6px 0" }}>Services</h2>
+          <div style={{ width: 48, height: 3, background: "#7c3aed", borderRadius: 2, marginBottom: 36 }} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
+            {SERVICES.map(svc => <div key={svc.title} style={{ borderRadius: 14, padding: 20, border: "1px solid rgba(88,28,135,0.2)", background: "rgba(13,8,38,0.5)" }} onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(139,92,246,0.35)"; e.currentTarget.style.boxShadow = "0 4px 24px rgba(124,58,237,0.12)"; }} onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(88,28,135,0.2)"; e.currentTarget.style.boxShadow = "none"; }}><div style={{ width: 40, height: 40, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, marginBottom: 12, background: "rgba(124,58,237,0.1)", color: "#a78bfa" }}>{svc.icon}</div><h4 style={{ color: "white", fontWeight: 700, fontSize: 13, margin: "0 0 8px 0", lineHeight: 1.3 }}>{svc.title}</h4><p style={{ color: "#6b7280", fontSize: 12, lineHeight: 1.6, margin: 0 }}>{svc.desc}</p></div>)}
+          </div>
+        </section>
+      );
+    }
+    function Skills() {
+      return (
+        <section id="skills" style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
+          <h2 style={{ color: "white", fontSize: 24, fontWeight: 700, margin: "0 0 6px 0" }}>Skills & Tools</h2>
+          <div style={{ width: 48, height: 3, background: "#7c3aed", borderRadius: 2, marginBottom: 36 }} />
+          <div style={{ borderRadius: 20, padding: 24, border: "1px solid rgba(88,28,135,0.25)", background: "rgba(13,8,38,0.4)", backdropFilter: "blur(8px)" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+              {SKILL_LIST.map(skill => <div key={skill.name} className="skill-pill" style={{ display: "flex", alignItems: "center", gap: 10, borderRadius: 12, padding: "10px 16px", border: "1px solid rgba(88,28,135,0.2)", background: "rgba(18,10,46,0.6)", cursor: "default" }}>{skill.iconKey ? <BrandIcon name={skill.iconKey} size={20} /> : <span style={{ width: 8, height: 8, borderRadius: "50%", background: skill.color, boxShadow: `0 0 8px ${skill.color}`, display: "inline-block" }} />}<span style={{ color: "#d1d5db", fontSize: 12, fontWeight: 500 }}>{skill.name}</span></div>)}
+              <div style={{ display: "flex", alignItems: "center", borderRadius: 12, padding: "10px 16px", border: "1px solid rgba(139,92,246,0.3)", background: "rgba(124,58,237,0.1)", color: "#c084fc", fontSize: 12, fontWeight: 600 }}>And many more...</div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+    function Projects() {
+      return (
+        <section id="projects" style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
+          <h2 style={{ color: "white", fontSize: 24, fontWeight: 700, margin: "0 0 6px 0" }}>Projects</h2>
+          <div style={{ width: 48, height: 3, background: "#7c3aed", borderRadius: 2, marginBottom: 36 }} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24 }}>
+            {PROJECTS.map(p => <div key={p.title} style={{ borderRadius: 20, padding: 24, border: "1px solid rgba(88,28,135,0.2)", background: "rgba(13,8,38,0.5)", display: "flex", flexDirection: "column" }} onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(139,92,246,0.45)"; e.currentTarget.style.boxShadow = "0 4px 28px rgba(124,58,237,0.14)"; }} onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(88,28,135,0.2)"; e.currentTarget.style.boxShadow = "none"; }}><div style={{ fontSize: 32, marginBottom: 12 }}>{p.emoji}</div><h4 style={{ color: "white", fontWeight: 700, fontSize: 14, margin: "0 0 8px 0", lineHeight: 1.4 }}>{p.title}</h4><p style={{ color: "#6b7280", fontSize: 12, lineHeight: 1.65, margin: "0 0 16px 0", flex: 1 }}>{p.desc}</p><div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>{p.tags.map(tag => <span key={tag} style={{ padding: "3px 10px", borderRadius: 6, fontSize: 10, fontWeight: 600, color: "#c084fc", border: "1px solid rgba(139,92,246,0.2)", background: "rgba(124,58,237,0.1)" }}>{tag}</span>)}</div><a href={p.link} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 6, color: "#a78bfa", fontSize: 12, fontWeight: 600, textDecoration: "none", padding: "7px 14px", borderRadius: 8, border: "1px solid rgba(139,92,246,0.25)", background: "rgba(124,58,237,0.08)", width: "fit-content" }} onMouseEnter={e => { e.currentTarget.style.background = "rgba(124,58,237,0.18)"; e.currentTarget.style.borderColor = "rgba(139,92,246,0.5)"; }} onMouseLeave={e => { e.currentTarget.style.background = "rgba(124,58,237,0.08)"; e.currentTarget.style.borderColor = "rgba(139,92,246,0.25)"; }}><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" /></svg> View on GitHub</a></div>)}
+          </div>
+        </section>
+      );
+    }
+    function Contact() {
+      const [form, setForm] = useState({ name: "", email: "", message: "" });
+      const [sent, setSent] = useState(false);
+      const handleSubmit = () => {
+        if (!form.name || !form.email || !form.message) return;
+        window.open(`mailto:of731528@gmail.com?subject=${encodeURIComponent(`Portfolio Contact from ${form.name}`)}&body=${encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\n\nMessage:\n${form.message}`)}`);
+        setSent(true); setTimeout(() => setSent(false), 3000); setForm({ name: "", email: "", message: "" });
+      };
+      const inputStyle = { width: "100%", padding: "10px 16px", fontSize: 13, color: "white", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(88,28,135,0.35)", borderRadius: 12, outline: "none", boxSizing: "border-box", fontFamily: "inherit", transition: "border-color 0.2s" };
+      return (
+        <section id="contact" style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}><h2 style={{ color: "white", fontSize: 24, fontWeight: 700, margin: "0 0 6px 0" }}>Contact</h2><div style={{ width: 48, height: 3, background: "#7c3aed", borderRadius: 2, margin: "0 auto 12px" }} /><p style={{ color: "#6b7280", fontSize: 13, margin: 0 }}>Have a project in mind? Let's talk!</p></div>
+          <div style={{ maxWidth: 480, margin: "0 auto" }}>
+            <div style={{ borderRadius: 20, padding: 28, border: "1px solid rgba(88,28,135,0.4)", background: "rgba(13,8,38,0.6)", backdropFilter: "blur(16px)" }}>
+              {sent ? <div style={{ textAlign: "center", padding: "32px 0" }}><div style={{ fontSize: 40, marginBottom: 12 }}>✅</div><p style={{ color: "white", fontWeight: 700, fontSize: 14, margin: 0 }}>Opening your email app...</p></div> :
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Your Name" style={inputStyle} onFocus={e => e.target.style.borderColor = "#7c3aed"} onBlur={e => e.target.style.borderColor = "rgba(88,28,135,0.35)"} />
+                  <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="Email Address" style={inputStyle} onFocus={e => e.target.style.borderColor = "#7c3aed"} onBlur={e => e.target.style.borderColor = "rgba(88,28,135,0.35)"} />
+                  <textarea rows={5} value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} placeholder="Message" style={{ ...inputStyle, resize: "none" }} onFocus={e => e.target.style.borderColor = "#7c3aed"} onBlur={e => e.target.style.borderColor = "rgba(88,28,135,0.35)"} />
+                  <button onClick={handleSubmit} style={{ width: "100%", padding: "11px", borderRadius: 12, fontWeight: 700, color: "white", fontSize: 13, background: "linear-gradient(135deg,#7c3aed,#6d28d9)", border: "none", cursor: "pointer", fontFamily: "inherit" }} onMouseEnter={e => e.target.style.opacity = "0.88"} onMouseLeave={e => e.target.style.opacity = "1"}>Send Message</button>
+                  <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 8 }}><a href="mailto:of731528@gmail.com" style={{ display: "flex", alignItems: "center", gap: 6, color: "#a78bfa", fontSize: 12, textDecoration: "none" }}><MailIcon /> of731528@gmail.com</a></div>
+                </div>}
+            </div>
+          </div>
+        </section>
+      );
+    }
+    function Footer() {
+      return (
+        <footer style={{ textAlign: "center", padding: "32px 24px", borderTop: "1px solid rgba(88,28,135,0.15)" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: 16, marginBottom: 16 }}>{SOCIAL_LINKS.filter(s => !s.disabled).map((s, i) => <a key={i} href={s.href} target={s.href.startsWith("mailto") ? "_self" : "_blank"} rel="noopener noreferrer" title={s.title} className="social-btn" style={{ width: 36, height: 36 }}>{s.icon}</a>)}</div>
+          <p style={{ color: "#4b5563", fontSize: 12, margin: 0 }}>© 2025 Omar Faruk · AI Automation Developer</p>
+        </footer>
+      );
+    }
+
+    function App() { return (<div style={{ minHeight: "100vh", background: "#060312", color: "white" }}><Navbar /><Hero /><About /><Services /><Skills /><Projects /><Contact /><Footer /></div>); }
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+
+</html>
