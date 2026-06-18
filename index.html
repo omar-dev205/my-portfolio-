@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap');
@@ -102,7 +102,7 @@
 <body style="background:#060312; color:white; margin:0;">
   <div id="root"></div>
 
-  <script type="text/babel">
+  <script type="text/babel" data-presets="react">
     const { useState, useEffect } = React;
 
     // Brand Icons
@@ -139,7 +139,6 @@
       { icon: <UpworkIcon />, href: "https://www.upwork.com/freelancers/~0169f53a954cd7ba4f?viewMode=1", title: "Upwork ", disabled: false },
       { icon: <FiverrIcon />, href: "https://www.fiverr.com/omar_ai3", title: "Fiverr", disabled: false },
     ];
-
 
     const SERVICES = [
       { icon: "🤖", title: "AI Agent Development", desc: "Build intelligent AI agents that understand, decide and act." },
@@ -181,7 +180,7 @@
       { title: "AI Lead Qualification Agent", desc: "An intelligent agent that automatically scores and qualifies incoming leads using AI, saving hours of manual sales work.", tags: ["AI Agent", "Make.com", "OpenAI"], emoji: "🎯", link: "https://github.com/omar-dev205/AI-Lead-Qualification-Agent" },
       { title: "LinkedIn Content Automation Agent", desc: "An automated AI workflow using Make.com, Google Sheets, and Gemini API to research, draft, and publish LinkedIn content efficiently.", tags: ["Make.com", "Gemini AI", "Google Sheets"], emoji: "📝", link: "https://github.com/omar-dev205/LinkedIn-Content-Automation-Agent" },
       { title: "Python Terminal Tools & Games", desc: "A collection of terminal-based Python projects including a Calculator and Rock Paper Scissors game — built to sharpen core Python skills.", tags: ["Python", "CLI", "Logic"], emoji: "🎮", link: "https://github.com/omar-dev205/project-1-python-tools-games" },
-      { title: " AI-Powered Customer support telegram Agent", desc: " An  AI customer support agent built with python and gemini that can understand and respond to customer inquiries automatically, improving response times and customer satisfaction.", tags: ["Python", "Gemini AI", "Customer Support"], emoji: "🤖", link: "https://github.com/omar-dev205/gemini-telegram-bot" }
+      { title: "AI-Powered Customer support telegram Agent", desc: "An AI customer support agent built with python and gemini that can understand and respond to customer inquiries automatically, improving response times and customer satisfaction.", tags: ["Python", "Gemini AI", "Customer Support"], emoji: "🤖", link: "https://github.com/omar-dev205/gemini-telegram-bot" }
     ];
 
     // Automation Flow Component
@@ -256,7 +255,7 @@
       );
     }
 
-    // Hero - with professional image styling
+    // Hero
     function Hero() {
       const [isHovered, setIsHovered] = useState(false);
       return (
@@ -281,7 +280,7 @@
                 </div>
               </div>
 
-              {/* Center: Professional Image with subtle rounded corners & shadow (no fake look) */}
+              {/* Center: Photo */}
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <div
                   onMouseEnter={() => setIsHovered(true)}
@@ -306,7 +305,7 @@
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      objectPosition: "center 30%", // adjust based on your photo (20% to 40%)
+                      objectPosition: "center 30%",
                       display: "block",
                     }}
                     onError={(e) => {
@@ -330,7 +329,6 @@
       );
     }
 
-    // About, Services, Skills, Projects, Contact, Footer (same as before, no changes needed)
     function About() {
       return (
         <section id="about" style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
@@ -345,6 +343,7 @@
         </section>
       );
     }
+
     function Services() {
       return (
         <section id="services" style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
@@ -356,6 +355,7 @@
         </section>
       );
     }
+
     function Skills() {
       return (
         <section id="skills" style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
@@ -370,6 +370,7 @@
         </section>
       );
     }
+
     function Projects() {
       return (
         <section id="projects" style={{ padding: "64px 24px", maxWidth: 1280, margin: "0 auto" }}>
@@ -381,6 +382,7 @@
         </section>
       );
     }
+
     function Contact() {
       const [form, setForm] = useState({ name: "", email: "", message: "" });
       const [sent, setSent] = useState(false);
@@ -408,6 +410,7 @@
         </section>
       );
     }
+
     function Footer() {
       return (
         <footer style={{ textAlign: "center", padding: "32px 24px", borderTop: "1px solid rgba(88,28,135,0.15)" }}>
