@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -10,15 +10,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0F0B1E;
-    --bg-2:#161029;
-    --panel:#1B1533;
-    --line:#2C2450;
-    --purple:#8B5CF6;
-    --purple-2:#C084FC;
-    --pink:#EC4899;
-    --text:#F3F1FA;
-    --muted:#A79FC4;
+    --bg:#071310;
+    --bg-2:#0D1F1A;
+    --panel:#112420;
+    --line:#1E3730;
+    --purple:#0EA37F;
+    --purple-2:#34D399;
+    --pink:#22C55E;
+    --text:#EAF6F1;
+    --muted:#8FB0A4;
     --radius:18px;
     --display:'Poppins',sans-serif;
     --body:'Inter',sans-serif;
@@ -176,19 +176,19 @@
   /* ---------- FLAGSHIP ---------- */
   .flagship-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;}
   .fcard{
-    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:28px;
-    transition:.25s;position:relative;overflow:hidden;
-  }
-  .fcard::before{
-    content:"";position:absolute;top:0;left:0;width:100%;height:3px;
-    background:linear-gradient(90deg,var(--purple),var(--pink));
-    transform:scaleX(0);transform-origin:left;transition:.3s;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:0;
+    transition:.25s;position:relative;overflow:hidden;display:flex;flex-direction:column;
   }
   .fcard:hover{border-color:var(--purple);transform:translateY(-4px);}
-  .fcard:hover::before{transform:scaleX(1);}
+  .fcard-img-wrap{position:relative;width:100%;aspect-ratio:16/9;background:var(--bg-2);overflow:hidden;}
+  .fcard-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:.4s;}
+  .fcard:hover .fcard-img-wrap img{transform:scale(1.05);}
+  .fcard-body{padding:22px 26px 26px;}
   .fcard .tag{
-    display:inline-block;font-size:11.5px;font-weight:600;color:var(--purple-2);
-    background:rgba(139,92,246,.12);padding:5px 12px;border-radius:999px;margin-bottom:14px;
+    position:absolute;top:14px;left:14px;z-index:2;
+    display:inline-block;font-size:11px;font-weight:700;color:#fff;letter-spacing:.03em;
+    background:linear-gradient(135deg,var(--purple),var(--pink));padding:5px 13px;border-radius:999px;
+    box-shadow:0 6px 16px rgba(139,92,246,.4);
   }
   .fcard h3{font-family:var(--display);font-size:19px;font-weight:600;margin-bottom:10px;}
   .fcard p{color:var(--muted);font-size:14.5px;margin-bottom:16px;}
@@ -201,8 +201,12 @@
   .live-tag .d{width:7px;height:7px;border-radius:50%;background:#4ADE80;animation:pulse 1.8s infinite;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
   #repo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
-  .rcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;transition:.2s;}
+  .rcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:0;display:flex;flex-direction:column;transition:.2s;overflow:hidden;}
   .rcard:hover{border-color:var(--purple);transform:translateY(-3px);}
+  .rcard-img-wrap{width:100%;aspect-ratio:16/9;background:var(--bg-2);overflow:hidden;}
+  .rcard-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:.4s;}
+  .rcard:hover .rcard-img-wrap img{transform:scale(1.06);}
+  .rcard-body{padding:20px;display:flex;flex-direction:column;flex:1;}
   .rcard .rname{font-weight:600;font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:8px;word-break:break-word;}
   .rcard .rdesc{font-size:13px;color:var(--muted);flex:1;margin-bottom:16px;line-height:1.55;}
   .rcard .rmeta{display:flex;align-items:center;gap:14px;font-size:11.5px;color:var(--muted);}
@@ -359,39 +363,17 @@
     </div>
   </section>
 
-  <!-- FLAGSHIP WORK -->
+  <!-- FLAGSHIP WORK (auto-updates from GitHub) -->
   <section id="work">
     <div class="wrap">
       <div class="sec-head">
         <div class="sec-tag">Selected Work</div>
-        <h2>Agents in production</h2>
-        <p>A few builds I'm proudest of — end-to-end, not proof-of-concept.</p>
+        <h2>Latest projects, auto-featured</h2>
+        <p>These update themselves — the most recently pushed repos on GitHub show up here automatically, with a live preview image, no manual editing needed.</p>
       </div>
-      <div class="flagship-grid">
-        <div class="fcard">
-          <span class="tag">FLAGSHIP</span>
-          <h3>MAYA — AI Sales Agent</h3>
-          <p>Telegram-based sales agent that processes orders, checks live inventory in Google Sheets, updates the CRM, and fires Gmail notifications automatically.</p>
-          <div class="stack"><span>Python</span><span>Groq API</span><span>Telegram Bot</span><span>n8n</span><span>Google Sheets</span></div>
-        </div>
-        <div class="fcard">
-          <span class="tag">FLAGSHIP</span>
-          <h3>MAYA — Multi-Platform</h3>
-          <p>The MAYA engine extended across five surfaces at once: WhatsApp, Facebook, Instagram, Telegram, and a standalone web app, sharing one pipeline.</p>
-          <div class="stack"><span>Python</span><span>Meta APIs</span><span>Telegram</span><span>Web App</span></div>
-        </div>
-        <div class="fcard">
-          <span class="tag">AUTOMATION</span>
-          <h3>AI Lead Qualification Agent</h3>
-          <p>Qualifies inbound leads automatically — scoring intent and routing only sales-ready conversations forward.</p>
-          <div class="stack"><span>Python</span><span>AI Agent</span><span>Automation</span></div>
-        </div>
-        <div class="fcard">
-          <span class="tag">AUTOMATION</span>
-          <h3>AI-Powered Email &amp; CRM Automation</h3>
-          <p>Watches inbound email, extracts what matters, and keeps the CRM current without manual re-entry.</p>
-          <div class="stack"><span>Python</span><span>Email API</span><span>CRM</span></div>
-        </div>
+      <div class="flagship-grid" id="featured-grid">
+        <div class="repo-skel"></div>
+        <div class="repo-skel"></div>
       </div>
     </div>
   </section>
@@ -488,6 +470,7 @@
 <script>
   const GH_USER = "omar-dev205";
   const grid = document.getElementById("repo-grid");
+  const featuredGrid = document.getElementById("featured-grid");
   const langColors = {
     Python:"#3572A5", JavaScript:"#f1e05a", HTML:"#e34c26", CSS:"#563d7c",
     "Jupyter Notebook":"#DA5B0B", TypeScript:"#3178c6", Shell:"#89e051"
@@ -501,33 +484,72 @@
     if(months < 12) return months + "mo ago";
     return Math.floor(months/12) + "y ago";
   }
+  function ogImage(repoName){
+    return `https://opengraph.githubassets.com/1/${GH_USER}/${repoName}`;
+  }
   const CACHE_KEY = "gh_repos_cache_" + GH_USER;
   const CACHE_TTL = 1000 * 60 * 60 * 2; // 2 hours
   const EXCLUDE = ["my-portfolio", GH_USER.toLowerCase()];
 
+  function renderFeatured(repos){
+    const top = repos.slice(0, 2);
+    if(top.length === 0){
+      featuredGrid.innerHTML = `<div class="repo-error">No projects to feature yet. Push a repo to GitHub and it'll show up here automatically.</div>`;
+      return;
+    }
+    featuredGrid.innerHTML = top.map((r, i) => {
+      const desc = r.description ? r.description : "No description yet — add one on GitHub and it appears here automatically.";
+      const label = i === 0 ? "LATEST" : "RECENT";
+      return `
+      <a class="fcard" href="${r.html_url}" target="_blank" rel="noopener">
+        <div class="fcard-img-wrap">
+          <span class="tag">${label}</span>
+          <img src="${ogImage(r.name)}" alt="${r.name} preview" loading="lazy" onerror="this.parentElement.style.display='none'">
+        </div>
+        <div class="fcard-body">
+          <h3>${r.name}</h3>
+          <p>${desc}</p>
+          <div class="stack">
+            ${r.language ? `<span>${r.language}</span>` : ""}
+            <span>★ ${r.stargazers_count}</span>
+            <span>Updated ${timeAgo(r.pushed_at)}</span>
+          </div>
+        </div>
+      </a>`;
+    }).join("");
+  }
+
   function renderRepos(repos){
+    if(repos.length === 0){
+      grid.innerHTML = `<div class="repo-error">No public repos found right now. See the full profile on <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener">GitHub</a>.</div>`;
+      return;
+    }
+    grid.innerHTML = repos.map(r => {
+      const desc = r.description ? r.description : "No description yet.";
+      const color = langColors[r.language] || "#8FB0A4";
+      return `
+      <a class="rcard" href="${r.html_url}" target="_blank" rel="noopener">
+        <div class="rcard-img-wrap"><img src="${ogImage(r.name)}" alt="${r.name} preview" loading="lazy" onerror="this.parentElement.style.display='none'"></div>
+        <div class="rcard-body">
+          <div class="rname">📦 ${r.name}</div>
+          <div class="rdesc">${desc}</div>
+          <div class="rmeta">
+            ${r.language ? `<span><span class="lang-dot" style="background:${color};"></span>${r.language}</span>` : ""}
+            <span>★ ${r.stargazers_count}</span>
+            <span>${timeAgo(r.pushed_at)}</span>
+          </div>
+        </div>
+      </a>`;
+    }).join("");
+  }
+
+  function renderAll(repos){
     const filtered = repos.filter(r => {
       const n = r.name.toLowerCase();
       return !r.fork && !EXCLUDE.some(x => n.includes(x));
     }).sort((a,b) => new Date(b.pushed_at) - new Date(a.pushed_at));
-    if(filtered.length === 0){
-      grid.innerHTML = `<div class="repo-error">No public repos found right now. See the full profile on <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener">GitHub</a>.</div>`;
-      return;
-    }
-    grid.innerHTML = filtered.map(r => {
-      const desc = r.description ? r.description : "No description yet.";
-      const color = langColors[r.language] || "#A79FC4";
-      return `
-      <a class="rcard" href="${r.html_url}" target="_blank" rel="noopener">
-        <div class="rname">📦 ${r.name}</div>
-        <div class="rdesc">${desc}</div>
-        <div class="rmeta">
-          ${r.language ? `<span><span class="lang-dot" style="background:${color};"></span>${r.language}</span>` : ""}
-          <span>★ ${r.stargazers_count}</span>
-          <span>${timeAgo(r.pushed_at)}</span>
-        </div>
-      </a>`;
-    }).join("");
+    renderFeatured(filtered);
+    renderRepos(filtered);
   }
 
   function getCache(){
@@ -550,9 +572,23 @@
     }catch(e){ return null; }
   }
 
+  function showError(err){
+    const stale = getStaleCache();
+    if(stale){
+      renderAll(stale);
+      return;
+    }
+    const msg = err.message === "RATE_LIMIT"
+      ? `GitHub's public API hit its hourly visitor limit just now. It resolves itself shortly — meanwhile, browse repos directly on <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener">github.com/${GH_USER}</a>.`
+      : `Couldn't load live repos right now (network issue). Browse them directly on <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener">github.com/${GH_USER}</a>.`;
+    grid.innerHTML = `<div class="repo-error">${msg}</div>`;
+    featuredGrid.innerHTML = `<div class="repo-error">${msg}</div>`;
+    console.error(err);
+  }
+
   const cached = getCache();
   if(cached){
-    renderRepos(cached);
+    renderAll(cached);
   } else {
     fetch(`https://api.github.com/users/${GH_USER}/repos?sort=updated&per_page=100`)
       .then(res => {
@@ -560,20 +596,11 @@
         if(!res.ok) throw new Error("GitHub API error " + res.status);
         return res.json();
       })
-      .then(repos => { setCache(repos); renderRepos(repos); })
-      .catch(err => {
-        const stale = getStaleCache();
-        if(stale){
-          renderRepos(stale);
-        } else if(err.message === "RATE_LIMIT"){
-          grid.innerHTML = `<div class="repo-error">GitHub's public API hit its hourly visitor limit just now. It resolves itself shortly — meanwhile, browse repos directly on <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener">github.com/${GH_USER}</a>.</div>`;
-        } else {
-          grid.innerHTML = `<div class="repo-error">Couldn't load live repos right now (network issue). Browse them directly on <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener">github.com/${GH_USER}</a>.</div>`;
-        }
-        console.error(err);
-      });
+      .then(repos => { setCache(repos); renderAll(repos); })
+      .catch(showError);
   }
 </script>
 
 </body>
 </html>
+
